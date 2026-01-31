@@ -46,7 +46,7 @@ function SidebarContent() {
 
   const menuItems: MenuItem[] = [
     {
-      name: 'Departamentos',
+      name: 'Secretarías',
       href: '/rrhh/departamentos',
       icon: Building,
     },

@@ -60,7 +60,7 @@ export const navigation: MenuItem[] = [
   },
   { name: 'Puntos de Norma', href: '/puntos-norma', icon: BookOpen },
   {
-    name: 'CRM',
+    name: 'Gestión del Ciudadano',
     href: '/crm',
     icon: Briefcase,
     feature: 'crm',

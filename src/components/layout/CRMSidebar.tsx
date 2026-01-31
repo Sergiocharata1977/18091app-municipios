@@ -2,8 +2,8 @@
  * CRMSidebar - Módulo CRM (Gestión de Clientes)
  *
  * Opciones:
- * 1. Dashboard CRM
- * 2. Clientes
+ * 1. Dashboard Gestión Ciudadano
+ * 2. Ciudadanos
  * 3. Contactos
  * 4. Oportunidades (Kanban)
  * 5. Evaluaciones
@@ -15,15 +15,15 @@
 
 import { cn } from '@/lib/utils';
 import {
-  Activity,
-  Briefcase,
-  Building2,
-  ChevronLeft,
-  Home,
-  Map,
-  MessageSquare,
-  Target,
-  Users,
+    Activity,
+    Briefcase,
+    Building2,
+    ChevronLeft,
+    Home,
+    Map,
+    MessageSquare,
+    Target,
+    Users,
 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -48,7 +48,7 @@ function SidebarContent() {
       badge: 'Kanban',
     },
     {
-      name: 'Clientes',
+      name: 'Ciudadanos',
       href: '/crm/clientes',
       icon: Building2,
     },
@@ -64,12 +64,12 @@ function SidebarContent() {
       badge: 'Chat',
     },
     {
-      name: 'Mapa Vendedores',
+      name: 'Mapa Agentes',
       href: '/crm/mapa',
       icon: Map,
     },
     {
-      name: 'Lista Vendedores',
+      name: 'Lista Agentes',
       href: '/crm/vendedores',
       icon: Users,
     },
@@ -103,9 +103,9 @@ function SidebarContent() {
                 <Briefcase className="w-4 h-4" />
               </div>
               <div>
-                <p className="font-semibold text-sm">CRM</p>
+                <p className="font-semibold text-sm">Gestión del Ciudadano</p>
                 <p className="text-[10px] text-slate-400">
-                  Gestión de Clientes
+                  Atención al Vecino
                 </p>
               </div>
             </div>
@@ -171,8 +171,8 @@ function SidebarContent() {
       {/* Footer */}
       {!collapsed && (
         <div className="p-4 border-t border-slate-700">
-          <p className="text-xs text-slate-500">Gestión Comercial</p>
-          <p className="text-xs text-slate-400">ISO 9001:2015</p>
+          <p className="text-xs text-slate-500">Gestión Municipal</p>
+          <p className="text-xs text-slate-400">ISO 18091:2019</p>
         </div>
       )}
     </aside>

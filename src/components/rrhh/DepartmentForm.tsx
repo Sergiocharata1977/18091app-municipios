@@ -61,7 +61,7 @@ export function DepartmentForm({
     <Card className="w-full max-w-2xl mx-auto border-0 shadow-none sm:shadow-sm">
       <CardHeader>
         <CardTitle>
-          {initialData ? 'Editar Departamento' : 'Nuevo Departamento'}
+          {initialData ? 'Editar Secretaría' : 'Nueva Secretaría'}
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -72,7 +72,7 @@ export function DepartmentForm({
               <Input
                 id="nombre"
                 {...register('nombre')}
-                placeholder="Nombre del departamento"
+                placeholder="Nombre de la secretaría"
                 className={
                   errors.nombre
                     ? 'border-red-500 focus:ring-red-500'
@@ -102,7 +102,7 @@ export function DepartmentForm({
             <Textarea
               id="descripcion"
               {...register('descripcion')}
-              placeholder="Descripción del departamento"
+              placeholder="Descripción de la secretaría"
               rows={3}
               className="resize-none focus:ring-emerald-500 focus:border-emerald-500"
             />
@@ -115,7 +115,7 @@ export function DepartmentForm({
               {...register('is_active')}
               className="rounded border-gray-300 text-emerald-600 focus:ring-emerald-500"
             />
-            <Label htmlFor="is_active">Departamento activo</Label>
+            <Label htmlFor="is_active">Secretaría activa</Label>
           </div>
 
           <div className="flex justify-end space-x-2 pt-4">

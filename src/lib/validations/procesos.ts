@@ -22,6 +22,23 @@ export const processDefinitionSchema = z.object({
     .string()
     .min(1, 'El responsable es requerido')
     .max(100, 'Máximo 100 caracteres'),
+  dependencia_administrativa: z
+    .string()
+    .min(1, 'La dependencia es requerida')
+    .max(100, 'Máximo 100 caracteres'),
+  tipologia: z.enum([
+    'Salud',
+    'Educación',
+    'Obras Públicas',
+    'Seguridad',
+    'Acción Social',
+    'Hacienda',
+    'Medio Ambiente',
+    'Cultura y Deporte',
+    'Administración Central',
+    'Otro',
+  ]),
+  impacto_ciudadano: z.enum(['Bajo', 'Medio', 'Alto']),
   entradas: z.array(z.object({ value: z.string() })),
   salidas: z.array(z.object({ value: z.string() })),
   controles: z.array(z.object({ value: z.string() })),

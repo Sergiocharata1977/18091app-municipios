@@ -10,6 +10,13 @@ import {
 } from '@/components/ui/collapsible';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import {
   ProcessDefinitionFormData,
@@ -19,7 +26,7 @@ import { ProcessDefinition } from '@/types/procesos';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ChevronDown, ChevronRight, Plus, X } from 'lucide-react';
 import { useState } from 'react';
-import { useFieldArray, useForm } from 'react-hook-form';
+import { Controller, useFieldArray, useForm } from 'react-hook-form';
 
 interface ProcessDefinitionProps {
   initialData?: ProcessDefinition | null;
@@ -55,6 +62,9 @@ export function ProcessDefinitionForm({
       ? {
           codigo: initialData.codigo,
           nombre: initialData.nombre,
+          dependencia_administrativa: initialData.dependencia_administrativa,
+          tipologia: initialData.tipologia,
+          impacto_ciudadano: initialData.impacto_ciudadano,
           objetivo: initialData.objetivo,
           alcance: initialData.alcance,
           responsable: initialData.responsable,
@@ -68,6 +78,9 @@ export function ProcessDefinitionForm({
       : {
           codigo: '',
           nombre: '',
+          dependencia_administrativa: '',
+          tipologia: 'Administración Central', // Valor por defecto seguro
+          impacto_ciudadano: 'Medio',
           objetivo: '',
           alcance: '',
           responsable: '',
@@ -319,6 +332,108 @@ export function ProcessDefinitionForm({
                   {errors.nombre && (
                     <p className="text-red-500 text-sm mt-1">
                       {errors.nombre.message}
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                <div>
+                  <Label htmlFor="dependencia_administrativa">
+                    Dependencia Administrativa (Secretaría) *
+                  </Label>
+                  <Input
+                    id="dependencia_administrativa"
+                    {...register('dependencia_administrativa')}
+                    placeholder="Ej: Secretaría de Hacienda"
+                    className={
+                      errors.dependencia_administrativa ? 'border-red-500' : ''
+                    }
+                  />
+                  {errors.dependencia_administrativa && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.dependencia_administrativa.message}
+                    </p>
+                  )}
+                </div>
+
+                <div>
+                  <Label>Tipología de Servicio *</Label>
+                  <Controller
+                    control={control}
+                    name="tipologia"
+                    render={({ field }) => (
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                        value={field.value}
+                      >
+                        <SelectTrigger
+                          className={errors.tipologia ? 'border-red-500' : ''}
+                        >
+                          <SelectValue placeholder="Seleccione tipología" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {[
+                            'Salud',
+                            'Educación',
+                            'Obras Públicas',
+                            'Seguridad',
+                            'Acción Social',
+                            'Hacienda',
+                            'Medio Ambiente',
+                            'Cultura y Deporte',
+                            'Administración Central',
+                            'Otro',
+                          ].map(opt => (
+                            <SelectItem key={opt} value={opt}>
+                              {opt}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    )}
+                  />
+                  {errors.tipologia && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.tipologia.message}
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                <div>
+                  <Label>Impacto en el Ciudadano *</Label>
+                  <Controller
+                    control={control}
+                    name="impacto_ciudadano"
+                    render={({ field }) => (
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                        value={field.value}
+                      >
+                        <SelectTrigger
+                          className={
+                            errors.impacto_ciudadano ? 'border-red-500' : ''
+                          }
+                        >
+                          <SelectValue placeholder="Seleccione impacto" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {['Bajo', 'Medio', 'Alto'].map(opt => (
+                            <SelectItem key={opt} value={opt}>
+                              {opt}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    )}
+                  />
+                  {errors.impacto_ciudadano && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.impacto_ciudadano.message}
                     </p>
                   )}
                 </div>

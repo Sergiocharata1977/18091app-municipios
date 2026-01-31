@@ -58,11 +58,11 @@ export function DepartmentForm({
   return (
     <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-6">
       <div className="space-y-2">
-        <Label htmlFor="nombre">Nombre del Departamento *</Label>
+        <Label htmlFor="nombre">Nombre de la Secretaría *</Label>
         <Input
           id="nombre"
           {...register('nombre')}
-          placeholder="Ingrese el nombre del departamento"
+          placeholder="Ingrese el nombre de la secretaría"
           className={errors.nombre ? 'border-red-500' : ''}
         />
         {errors.nombre && (
@@ -75,7 +75,7 @@ export function DepartmentForm({
         <Textarea
           id="descripcion"
           {...register('descripcion')}
-          placeholder="Ingrese una descripción del departamento"
+          placeholder="Ingrese una descripción de la secretaría"
           rows={3}
           className={errors.descripcion ? 'border-red-500' : ''}
         />
@@ -105,7 +105,7 @@ export function DepartmentForm({
           checked={isActive}
           onCheckedChange={checked => setValue('is_active', checked as boolean)}
         />
-        <Label htmlFor="is_active">Departamento activo</Label>
+        <Label htmlFor="is_active">Secretaría activa</Label>
       </div>
 
       <div className="flex justify-end gap-3 pt-4 border-t border-slate-100">

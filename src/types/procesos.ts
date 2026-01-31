@@ -1,5 +1,7 @@
 // Tipos de datos para el módulo de Procesos ISO 9001
 
+import { ImpactoCiudadano, TipologiaServicio } from './servicios';
+
 export interface ProcessDefinition {
   id: string;
   codigo: string;
@@ -7,6 +9,9 @@ export interface ProcessDefinition {
   objetivo: string;
   alcance: string;
   responsable: string;
+  dependencia_administrativa: string;
+  tipologia: TipologiaServicio;
+  impacto_ciudadano: ImpactoCiudadano;
   entradas?: string[];
   salidas?: string[];
   controles?: string[];

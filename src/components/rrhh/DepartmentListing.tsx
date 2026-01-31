@@ -305,13 +305,13 @@ export const DepartmentListing: React.FC<DepartmentListingProps> = ({
           <Building2 className="mx-auto h-12 w-12 text-gray-400" />
           <h3 className="mt-2 text-sm font-medium text-gray-900">
             {searchTerm
-              ? 'No se encontraron departamentos'
-              : 'No hay departamentos registrados'}
+              ? 'No se encontraron secretarías'
+              : 'No hay secretarías registradas'}
           </h3>
           <p className="mt-1 text-sm text-gray-500">
             {searchTerm
               ? 'No se encontraron resultados que coincidan con tu búsqueda.'
-              : 'Comienza agregando el primer departamento.'}
+              : 'Comienza agregando la primera secretaría.'}
           </p>
           {!searchTerm && (
             <div className="mt-6 flex gap-4 justify-center">
@@ -320,7 +320,7 @@ export const DepartmentListing: React.FC<DepartmentListingProps> = ({
                 className="bg-emerald-600 hover:bg-emerald-700"
               >
                 <Plus className="mr-2 h-4 w-4" />
-                Nuevo Departamento
+                Nueva Secretaría
               </Button>
               <Button
                 onClick={handleSeedData}
@@ -505,10 +505,10 @@ export const DepartmentListing: React.FC<DepartmentListingProps> = ({
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
           <h2 className="text-2xl font-bold text-gray-900">
-            Gestión de Departamentos
+            Gestión de Secretarías
           </h2>
           <p className="text-gray-600">
-            Administra los departamentos de la organización
+            Administra las secretarías del municipio
           </p>
         </div>
         <Button
@@ -516,7 +516,7 @@ export const DepartmentListing: React.FC<DepartmentListingProps> = ({
           className="bg-emerald-600 hover:bg-emerald-700 shadow-sm"
         >
           <Plus className="mr-2 h-4 w-4" />
-          Nuevo Departamento
+          Nueva Secretaría
         </Button>
       </div>
 
@@ -530,7 +530,7 @@ export const DepartmentListing: React.FC<DepartmentListingProps> = ({
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
                 <Input
                   type="text"
-                  placeholder="Buscar departamentos..."
+                  placeholder="Buscar secretarías..."
                   value={searchTerm}
                   onChange={e => setSearchTerm(e.target.value)}
                   className="pl-10 border-slate-200 focus:ring-emerald-500 focus:border-emerald-500"
