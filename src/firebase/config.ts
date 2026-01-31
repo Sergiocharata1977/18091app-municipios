@@ -1,20 +1,19 @@
 // Import the functions you need from the SDKs you need
-import { initializeApp } from 'firebase/app';
 import { getAnalytics } from 'firebase/analytics';
+import { initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 import { getStorage } from 'firebase/storage';
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: 'AIzaSyB80eKra_lUIjDGe-K0Hxbbq0Fabfdr03Y',
-  authDomain: 'app-4b05c.firebaseapp.com',
-  databaseURL: 'https://app-4b05c-default-rtdb.firebaseio.com',
-  projectId: 'app-4b05c',
-  storageBucket: 'app-4b05c.firebasestorage.app',
-  messagingSenderId: '69562046511',
-  appId: '1:69562046511:web:38b909326efd9b3fc60eda',
-  measurementId: 'G-Z1RKVMSQGJ',
+  apiKey: 'AIzaSyD2ogNoY9sP_xFk1sExA0EylsEkxzvh1k8',
+  authDomain: 'muni-18091app.firebaseapp.com',
+  projectId: 'muni-18091app',
+  storageBucket: 'muni-18091app.firebasestorage.app',
+  messagingSenderId: '1035235368194',
+  appId: '1:1035235368194:web:98656856f934dbfd5cb61b',
+  measurementId: 'G-XXXXXXXXXX', // Will be detected if enabled
 };
 
 // Verificar que la configuración sea válida
