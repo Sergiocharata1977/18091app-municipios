@@ -102,9 +102,9 @@ function createLazyProxy<T extends object>(getter: (app: admin.app.App) => T): T
 
 // Exportar instancias LAZY (Proxies)
 // Esto permite importar 'adminDb' sin disparar la inicialización ni leer env vars inmediatamente.
-export const adminDb = createLazyProxy((app) => app.firestore());
-export const adminAuth = createLazyProxy((app) => app.auth());
-export const adminStorage = createLazyProxy((app) => app.storage());
+export const adminDb = createLazyProxy((app) => admin.firestore(app));
+export const adminAuth = createLazyProxy((app) => admin.auth(app));
+export const adminStorage = createLazyProxy((app) => admin.storage(app));
 
 // Exportar el objeto auth para compatibilidad con código existente
 export const auth = {
