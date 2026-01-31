@@ -121,13 +121,13 @@ export function initializeFirebaseAdmin(): App {
     console.log(
       '✅ Firebase Admin SDK initialized successfully (using environment variables)'
     );
-    console.log(`   Project ID: ${projectId}`);
-    console.log(
-      `   Storage Bucket: ${storageBucket || `${projectId}.appspot.com`}`
-    );
-
     return adminApp;
   } catch (error) {
+    // If we are in build time and vars are missing, don't crash the whole process
+    if (process.env.NEXT_PHASE === 'phase-production-build') {
+      console.warn('⚠️ Skipping Firebase Admin initialization during build phase (missing credentials)');
+      return null as any; 
+    }
     console.error('❌ Failed to initialize Firebase Admin SDK:', error);
     throw error;
   }

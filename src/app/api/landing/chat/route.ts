@@ -1,23 +1,11 @@
 // API Route para chat de landing page con GROQ
 import { LeadQualificationService } from '@/services/landing/LeadQualificationService';
 import type { ChatMessage } from '@/types/landing-lead';
-import * as admin from 'firebase-admin';
 import { Timestamp } from 'firebase-admin/firestore';
 import Groq from 'groq-sdk';
 import { NextRequest, NextResponse } from 'next/server';
 
-// Inicializar Firebase Admin si no está inicializado
-if (!admin.apps.length) {
-  admin.initializeApp({
-    credential: admin.credential.cert({
-      projectId: process.env.FIREBASE_PROJECT_ID,
-      clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-      privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
-    }),
-  });
-}
-
-const db = admin.firestore();
+import { adminDb as db } from '@/firebase/admin';
 
 // Initialized lazily inside handler to prevent build errors
 // const groq = new Groq({ ... });
