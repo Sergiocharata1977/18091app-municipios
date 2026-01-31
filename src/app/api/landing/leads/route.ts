@@ -1,20 +1,8 @@
 // API para gestionar leads de landing page
 import type { LandingLead } from '@/types/landing-lead';
-import * as admin from 'firebase-admin';
 import { NextRequest, NextResponse } from 'next/server';
 
-// Inicializar Firebase Admin si no está inicializado
-if (!admin.apps.length) {
-  admin.initializeApp({
-    credential: admin.credential.cert({
-      projectId: process.env.FIREBASE_PROJECT_ID,
-      clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-      privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
-    }),
-  });
-}
-
-const db = admin.firestore();
+import { adminDb as db } from '@/firebase/admin';
 
 // GET - Listar leads
 export async function GET(request: NextRequest) {

@@ -3,12 +3,12 @@
 import { useLanguage } from '@/components/marketing/language-context';
 import { Card, CardContent } from '@/components/ui/card';
 import {
-    DollarSign,
-    FileStack,
-    Globe,
-    GraduationCap,
-    ShieldCheck,
-    Zap,
+  DollarSign,
+  FileStack,
+  Globe,
+  GraduationCap,
+  ShieldCheck,
+  Zap,
 } from 'lucide-react';
 
 const icons = [DollarSign, FileStack, GraduationCap, ShieldCheck, Zap, Globe];

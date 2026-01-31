@@ -18,7 +18,7 @@ export const TERMINOLOGY = {
   provider: {
     singular: 'Proveedor',
     plural: 'Proveedores',
-    short: 'Prov.'
+    short: 'Prov.',
   },
 
   // Roles & Hierarchy

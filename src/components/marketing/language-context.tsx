@@ -1,11 +1,11 @@
 'use client';
 
 import {
-    createContext,
-    useContext,
-    useEffect,
-    useState,
-    type ReactNode,
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  type ReactNode,
 } from 'react';
 
 type Language = 'en' | 'es' | 'pt';
@@ -190,8 +190,7 @@ const translations: Record<Language, Translations> = {
     },
     howItWorks: {
       title: 'Cómo Funciona',
-      subtitle:
-        'MuniQuality adapta la norma a la realidad de tu municipio.',
+      subtitle: 'MuniQuality adapta la norma a la realidad de tu municipio.',
       features: [
         {
           title: 'Diagnóstico Integral',
@@ -264,8 +263,7 @@ const translations: Record<Language, Translations> = {
     },
     demo: {
       title: 'Solicita una Demo',
-      subtitle:
-        'Vea cómo MuniQuality puede modernizar su municipio hoy mismo.',
+      subtitle: 'Vea cómo MuniQuality puede modernizar su municipio hoy mismo.',
       form: {
         name: 'Nombre del Funcionario',
         email: 'Email Institucional',

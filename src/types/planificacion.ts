@@ -33,6 +33,8 @@ export interface PlanBase {
 // ============================================
 
 export interface PlanIdentidad extends PlanBase {
+  intendente: string;
+  periodo_gestion: string;
   mision: string;
   vision: string;
   valores: string;
@@ -95,11 +97,11 @@ export type PlanCollectionType = keyof typeof PLAN_COLLECTIONS;
 // ============================================
 
 export const PLAN_TITULOS: Record<PlanCollectionType, string> = {
-  identidad: 'Identidad Organizacional',
-  alcance: 'Alcance del SGC',
-  contexto: 'Contexto de la Organización',
-  estructura: 'Estructura Organizacional',
-  politicas: 'Políticas',
+  identidad: 'Identidad Municipal',
+  alcance: 'Alcance del SGM',
+  contexto: 'Contexto del Municipio',
+  estructura: 'Estructura Municipal',
+  politicas: 'Políticas Públicas',
 };
 
 // ============================================
@@ -112,26 +114,38 @@ export const PLAN_CAMPOS: Record<
 > = {
   identidad: [
     {
+      key: 'intendente',
+      label: 'Intendente / Jefe de Gobierno',
+      rows: 1,
+      isoClauseKey: '5.1',
+    },
+    {
+      key: 'periodo_gestion',
+      label: 'Período de Gestión',
+      rows: 1,
+      isoClauseKey: '5.1',
+    },
+    {
       key: 'mision',
-      label: 'Misión',
+      label: 'Misión Municipal',
       rows: 3,
       isoClauseKey: '4.1',
     },
     {
       key: 'vision',
-      label: 'Visión',
+      label: 'Visión de Ciudad',
       rows: 3,
       isoClauseKey: '5.1',
     },
     {
       key: 'valores',
-      label: 'Valores',
+      label: 'Valores y Ética Pública',
       rows: 3,
       isoClauseKey: '5.1',
     },
     {
       key: 'objetivos_estrategicos',
-      label: 'Objetivos Estratégicos',
+      label: 'Prioridades de Gestión',
       rows: 3,
       isoClauseKey: '5.1',
     },
@@ -165,19 +179,19 @@ export const PLAN_CAMPOS: Record<
   contexto: [
     {
       key: 'contexto_interno',
-      label: 'Contexto Interno (Fortalezas/Debilidades)',
+      label: 'Contexto Interno del Municipio',
       rows: 4,
       isoClauseKey: '4.1',
     },
     {
       key: 'contexto_externo',
-      label: 'Contexto Externo (Oportunidades/Amenazas)',
+      label: 'Contexto Social y Político (Externo)',
       rows: 4,
       isoClauseKey: '4.1',
     },
     {
       key: 'partes_interesadas',
-      label: 'Partes Interesadas',
+      label: 'Ciudadanos y Partes Interesadas',
       rows: 3,
       isoClauseKey: '4.2',
     },

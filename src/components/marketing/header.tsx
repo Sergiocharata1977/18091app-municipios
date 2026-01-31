@@ -3,11 +3,11 @@
 import { useLanguage } from '@/components/marketing/language-context';
 import { Button } from '@/components/ui/button';
 import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from '@/components/ui/select';
 import { Menu, X } from 'lucide-react';
 import { useState } from 'react';

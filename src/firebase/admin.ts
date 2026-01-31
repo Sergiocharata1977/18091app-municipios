@@ -37,17 +37,23 @@ function getFirebaseAdminApp(): admin.app.App {
         fs.readFileSync(serviceAccountPath, 'utf8')
       );
 
-      adminApp = admin.initializeApp({
-        credential: admin.credential.cert(serviceAccount),
-        storageBucket: `${serviceAccount.project_id}.appspot.com`,
-      }, 'admin-instance'); // Damos un nombre único para evitar colisiones con el default
+      adminApp = admin.initializeApp(
+        {
+          credential: admin.credential.cert(serviceAccount),
+          storageBucket: `${serviceAccount.project_id}.appspot.com`,
+        },
+        'admin-instance'
+      ); // Damos un nombre único para evitar colisiones con el default
 
       console.log('[Firebase Admin] Initialized with service-account.json');
     } else {
       // Usar variables de entorno (producción/Vercel)
       const projectId = process.env.FIREBASE_PROJECT_ID;
       const clientEmail = process.env.FIREBASE_CLIENT_EMAIL;
-      const privateKey = process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n');
+      const privateKey = process.env.FIREBASE_PRIVATE_KEY?.replace(
+        /\\n/g,
+        '\n'
+      );
 
       // Checkeo de seguridad para no crashear en build si faltan vars
       // En build time (next build), es posible que estas vars no existan.
@@ -55,17 +61,22 @@ function getFirebaseAdminApp(): admin.app.App {
       if (!projectId || !clientEmail || !privateKey) {
         // Si estamos en fase de build (CI), retornamos algo dummy o lanzamos error controlado
         // Pero para lazy loading, simplemente no asignamos adminApp y lanzamos error
-        throw new Error('Missing Firebase Admin environment variables (project_id, client_email, private_key)');
+        throw new Error(
+          'Missing Firebase Admin environment variables (project_id, client_email, private_key)'
+        );
       }
 
-      adminApp = admin.initializeApp({
-        credential: admin.credential.cert({
-          projectId,
-          clientEmail,
-          privateKey,
-        }),
-        storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
-      }, 'admin-instance');
+      adminApp = admin.initializeApp(
+        {
+          credential: admin.credential.cert({
+            projectId,
+            clientEmail,
+            privateKey,
+          }),
+          storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
+        },
+        'admin-instance'
+      );
 
       console.log('[Firebase Admin] Initialized with environment variables');
     }
@@ -74,37 +85,44 @@ function getFirebaseAdminApp(): admin.app.App {
   } catch (error) {
     // En tiempo de build, es normal que falle si no hay env vars.
     // Logueamos pero no "matamos" el proceso aquí. El error real saltará cuando se intente usar adminDb.
-    console.warn('[Firebase Admin] Initialization deferred or failed:', error instanceof Error ? error.message : error);
+    console.warn(
+      '[Firebase Admin] Initialization deferred or failed:',
+      error instanceof Error ? error.message : error
+    );
     throw error;
   }
 }
 
 // Helper para crear Proxies
-function createLazyProxy<T extends object>(getter: (app: admin.app.App) => T): T {
+function createLazyProxy<T extends object>(
+  getter: (app: admin.app.App) => T
+): T {
   return new Proxy({} as T, {
     get: (_target, prop) => {
       try {
         const app = getFirebaseAdminApp();
         const instance = getter(app);
         const value = (instance as any)[prop];
-        
+
         if (typeof value === 'function') {
           return value.bind(instance);
         }
         return value;
       } catch (error) {
-        console.error(`[Firebase Admin] Error accessing property '${String(prop)}'. Integration usually fails here if env vars are missing during build/runtime.`);
+        console.error(
+          `[Firebase Admin] Error accessing property '${String(prop)}'. Integration usually fails here if env vars are missing during build/runtime.`
+        );
         throw error;
       }
-    }
+    },
   });
 }
 
 // Exportar instancias LAZY (Proxies)
 // Esto permite importar 'adminDb' sin disparar la inicialización ni leer env vars inmediatamente.
-export const adminDb = createLazyProxy((app) => admin.firestore(app));
-export const adminAuth = createLazyProxy((app) => admin.auth(app));
-export const adminStorage = createLazyProxy((app) => admin.storage(app));
+export const adminDb = createLazyProxy(app => admin.firestore(app));
+export const adminAuth = createLazyProxy(app => admin.auth(app));
+export const adminStorage = createLazyProxy(app => admin.storage(app));
 
 // Exportar el objeto auth para compatibilidad con código existente
 export const auth = {
