@@ -1,0 +1,53 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+    - generic [ref=e2]:
+        - generic [ref=e5]:
+            - generic [ref=e6]:
+                - img [ref=e8]
+                - generic [ref=e11]: Don Cándido IA
+            - heading "Gestión de Calidad Potenciada por IA" [level=1] [ref=e12]:
+                - text: Gestión de Calidad
+                - text: Potenciada por IA
+            - paragraph [ref=e13]: Automatiza auditorías, gestiona hallazgos y optimiza tus procesos ISO 9001 con la ayuda de inteligencia artificial avanzada.
+            - generic [ref=e14]:
+                - generic [ref=e15]:
+                    - img [ref=e17]
+                    - generic [ref=e20]:
+                        - heading "Asistente de IA 24/7" [level=3] [ref=e21]
+                        - paragraph [ref=e22]: Gestión de Hallazgos Automatizada
+                - generic [ref=e23]:
+                    - img [ref=e25]
+                    - generic [ref=e28]:
+                        - heading "Dashboard en Tiempo Real" [level=3] [ref=e29]
+                        - paragraph [ref=e30]: Monitorea KPIs y tendencias automáticamente
+                - generic [ref=e31]:
+                    - img [ref=e33]
+                    - generic [ref=e35]:
+                        - heading "Trazabilidad Total" [level=3] [ref=e36]
+                        - paragraph [ref=e37]: Cumplimiento completo de ISO 9001:2015
+        - generic [ref=e39]:
+            - generic [ref=e40]:
+                - generic [ref=e41]:
+                    - heading "Bienvenido de nuevo" [level=2] [ref=e42]
+                    - paragraph [ref=e43]: Ingresa tus credenciales para acceder al sistema
+                - generic [ref=e44]:
+                    - generic [ref=e45]:
+                        - generic [ref=e46]: Correo Electrónico
+                        - textbox "Correo Electrónico" [ref=e47]:
+                            - /placeholder: usuario@empresa.com
+                    - generic [ref=e48]:
+                        - generic [ref=e49]: Contraseña
+                        - textbox "Contraseña" [ref=e50]:
+                            - /placeholder: ••••••••
+                    - button "Ingresar" [ref=e51]:
+                        - generic [ref=e52]: Ingresar
+                        - img [ref=e53]
+                - paragraph [ref=e57]:
+                    - text: ¿No tienes cuenta?
+                    - link "Regístrate gratis" [ref=e58] [cursor=pointer]:
+                        - /url: /register
+            - paragraph [ref=e59]: © 2026 Don Cándido IA. Todos los derechos reservados.
+    - alert [ref=e60]
+```

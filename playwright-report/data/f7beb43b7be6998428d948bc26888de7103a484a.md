@@ -1,0 +1,388 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e1]:
+    - generic:
+        - generic:
+            - generic:
+                - generic:
+                    - generic:
+                        - generic:
+                            - img "ISO 9001 Quality Management"
+                - generic:
+                    - button:
+                        - img
+                - navigation:
+                    - generic:
+                        - generic:
+                            - link "Noticias":
+                                - /url: /noticias
+                                - img
+                                - text: Noticias
+                        - generic:
+                            - link "Calendario":
+                                - /url: /calendario
+                                - img
+                                - text: Calendario
+                        - generic:
+                            - link "Mi SGC":
+                                - /url: /mi-sgc
+                                - img
+                                - text: Mi SGC
+                        - generic:
+                            - link "Planificación y Revisión":
+                                - /url: /planificacion-revision-direccion
+                                - img
+                                - text: Planificación y Revisión
+                        - generic:
+                            - link "Mejora":
+                                - /url: /mejoras
+                                - img
+                                - text: Mejora
+                        - generic:
+                            - link "Documentos":
+                                - /url: /documentos
+                                - img
+                                - text: Documentos
+                        - generic:
+                            - link "Puntos de Norma":
+                                - /url: /puntos-norma
+                                - img
+                                - text: Puntos de Norma
+                        - generic:
+                            - link "CRM":
+                                - /url: /crm
+                                - img
+                                - text: CRM
+                        - generic:
+                            - link "RRHH":
+                                - /url: /rrhh
+                                - img
+                                - text: RRHH
+                        - generic:
+                            - link "Procesos":
+                                - /url: /procesos
+                                - img
+                                - text: Procesos
+                        - generic:
+                            - link "Usuarios":
+                                - /url: /admin/usuarios
+                                - img
+                                - text: Usuarios
+        - generic:
+            - generic:
+                - banner:
+                    - generic:
+                        - generic:
+                            - heading "Sistema ISO 9001" [level=1]
+                        - generic:
+                            - generic:
+                                - generic:
+                                    - img
+                                - generic:
+                                    - generic: Organización
+                                    - generic: Los Señores del Agro S.A.
+                            - generic:
+                                - generic:
+                                    - generic:
+                                        - generic:
+                                            - paragraph: e2e-test@doncandidoia.com
+                                        - button "Menú de usuario": E
+            - main:
+                - generic:
+                    - generic:
+                        - generic:
+                            - generic:
+                                - generic:
+                                    - heading "Centro de Noticias" [level=1] [ref=e2]
+                                    - button "Comenzar tour guiado":
+                                        - img
+                                        - generic: Comenzar tour guiado
+                                - paragraph: Comunicaciones y novedades de tu organización
+                            - generic:
+                                - generic:
+                                    - generic:
+                                        - heading "Centro de Noticias" [level=1]
+                                        - generic: ISO 9001
+                                    - generic:
+                                        - generic:
+                                            - img
+                                            - searchbox "Buscar publicaciones..."
+                                    - generic:
+                                        - button:
+                                            - img
+                                        - button "3":
+                                            - img
+                                            - generic: '3'
+                                        - button "Nueva Publicación":
+                                            - img
+                                            - text: Nueva Publicación
+                        - generic:
+                            - complementary:
+                                - complementary:
+                                    - generic:
+                                        - generic:
+                                            - generic:
+                                                - heading "Estadísticas" [level=3]:
+                                                    - img
+                                                    - text: Estadísticas
+                                            - generic:
+                                                - generic:
+                                                    - generic:
+                                                        - img
+                                                        - generic:
+                                                            - paragraph: '156'
+                                                            - paragraph: Publicaciones
+                                                    - generic:
+                                                        - img
+                                                        - generic:
+                                                            - paragraph: '892'
+                                                            - paragraph: Reacciones
+                                                    - generic:
+                                                        - img
+                                                        - generic:
+                                                            - paragraph: '423'
+                                                            - paragraph: Comentarios
+                                                    - generic:
+                                                        - img
+                                                        - generic:
+                                                            - paragraph: '47'
+                                                            - paragraph: Activos
+                                        - generic:
+                                            - generic:
+                                                - heading "Categorías" [level=3]:
+                                                    - img
+                                                    - text: Categorías
+                                            - generic:
+                                                - generic:
+                                                    - button "Calidad 23":
+                                                        - generic: Calidad
+                                                        - generic: '23'
+                                                    - button "Procesos 18":
+                                                        - generic: Procesos
+                                                        - generic: '18'
+                                                    - button "Auditorías 12":
+                                                        - generic: Auditorías
+                                                        - generic: '12'
+                                                    - button "Mejora Continua 31":
+                                                        - generic: Mejora Continua
+                                                        - generic: '31'
+                            - main:
+                                - generic:
+                                    - generic:
+                                        - generic:
+                                            - button "✏️ Crear nueva publicación"
+                                        - generic:
+                                            - generic:
+                                                - generic:
+                                                    - generic:
+                                                        - generic:
+                                                            - generic:
+                                                                - generic:
+                                                                    - generic:
+                                                                        - generic: R
+                                                                    - generic:
+                                                                        - generic:
+                                                                            - paragraph: roberto
+                                                                            - generic: ISO 9001
+                                                                        - generic:
+                                                                            - img
+                                                                            - generic: Hace un momento
+                                                                - button:
+                                                                    - img
+                                                        - generic:
+                                                            - generic:
+                                                                - paragraph: Se llevó a cabo la capacitación sobre el Nuevo procesos de ventas vía web , como el análisis de riesgo aju😂tandos a la nueva normas ISO 9001 2026. Implmentamos la nueva app de ventas para los vendedores
+                                                            - generic:
+                                                                - generic:
+                                                                    - img "Gemini_Generated_Image_p01bpvp01bpvp01b (1).png"
+                                                            - generic:
+                                                                - generic:
+                                                                    - button:
+                                                                        - generic:
+                                                                            - img
+                                                                    - button "1":
+                                                                        - img
+                                                                        - generic: '1'
+                                                                - button:
+                                                                    - img
+                                            - generic:
+                                                - generic:
+                                                    - generic:
+                                                        - generic:
+                                                            - generic:
+                                                                - generic:
+                                                                    - generic:
+                                                                        - generic: R
+                                                                    - generic:
+                                                                        - generic:
+                                                                            - paragraph: roberto
+                                                                            - generic: ISO 9001
+                                                                        - generic:
+                                                                            - img
+                                                                            - generic: Hace un momento
+                                                                - button:
+                                                                    - img
+                                                        - generic:
+                                                            - generic:
+                                                                - paragraph: Los Señores del Agro comenzó construcción de nueve Infraestructura, en la Ciudad dePerez Gil . Eperemo que este Proyecto ea
+                                                            - generic:
+                                                                - generic:
+                                                                    - img "Gemini_Generated_Image_8q4jr28q4jr28q4j.png"
+                                                            - generic:
+                                                                - generic:
+                                                                    - button:
+                                                                        - generic:
+                                                                            - img
+                                                                    - button "0":
+                                                                        - img
+                                                                        - generic: '0'
+                                                                - button:
+                                                                    - img
+                                            - generic:
+                                                - generic:
+                                                    - generic:
+                                                        - generic:
+                                                            - generic:
+                                                                - generic:
+                                                                    - generic:
+                                                                        - generic: U
+                                                                    - generic:
+                                                                        - generic:
+                                                                            - paragraph: Usuario
+                                                                            - generic: ISO 9001
+                                                                        - generic:
+                                                                            - img
+                                                                            - generic: Hace un momento
+                                                                - button:
+                                                                    - img
+                                                        - generic:
+                                                            - generic:
+                                                                - paragraph: Comienza la Campaña de Girasol y lo señores del Agro esa presente con nuestros clientes
+                                                            - generic:
+                                                                - generic:
+                                                                    - img "Gemini_Generated_Image_5f7exd5f7exd5f7e.png"
+                                                            - generic:
+                                                                - generic:
+                                                                    - button:
+                                                                        - generic:
+                                                                            - img
+                                                                    - button "0":
+                                                                        - img
+                                                                        - generic: '0'
+                                                                - button:
+                                                                    - img
+                                            - generic:
+                                                - generic:
+                                                    - generic:
+                                                        - generic:
+                                                            - generic:
+                                                                - generic:
+                                                                    - generic:
+                                                                        - generic: U
+                                                                    - generic:
+                                                                        - generic:
+                                                                            - paragraph: Usuario
+                                                                            - generic: ISO 9001
+                                                                        - generic:
+                                                                            - img
+                                                                            - generic: Hace un momento
+                                                                - button:
+                                                                    - img
+                                                        - generic:
+                                                            - generic:
+                                                                - paragraph: Hoy comenzamos la Implementación de ISo 9001 en los señores de lAgro .
+                                                            - generic:
+                                                                - generic:
+                                                                    - img "Gemini_Generated_Image_njob0hnjob0hnjob.png"
+                                                            - generic:
+                                                                - generic:
+                                                                    - button:
+                                                                        - generic:
+                                                                            - img
+                                                                    - button "0":
+                                                                        - img
+                                                                        - generic: '0'
+                                                                - button:
+                                                                    - img
+                            - complementary:
+                                - generic:
+                                    - generic:
+                                        - generic:
+                                            - generic:
+                                                - heading "Próximos Eventos" [level=3]:
+                                                    - img
+                                                    - text: Próximos Eventos
+                                                - button "Ver todo":
+                                                    - text: Ver todo
+                                                    - img
+                                        - generic:
+                                            - generic:
+                                                - 'button "📚 Capacitación: Normas de Calidad ISO 9001 en 5d Capacitación"':
+                                                    - generic:
+                                                        - generic:
+                                                            - paragraph: '📚 Capacitación: Normas de Calidad ISO 9001'
+                                                            - generic:
+                                                                - img
+                                                                - generic: en 5d
+                                                        - generic: Capacitación
+                                                - 'button "📚 Capacitación: Planificacion etrategica 2026/2027 en 11d Capacitación"':
+                                                    - generic:
+                                                        - generic:
+                                                            - paragraph: '📚 Capacitación: Planificacion etrategica 2026/2027'
+                                                            - generic:
+                                                                - img
+                                                                - generic: en 11d
+                                                        - generic: Capacitación
+                                                - 'button "📋 Evaluación: ISO 9001 2015 en 12d Evaluación"':
+                                                    - generic:
+                                                        - generic:
+                                                            - paragraph: '📋 Evaluación: ISO 9001 2015'
+                                                            - generic:
+                                                                - img
+                                                                - generic: en 12d
+                                                        - generic: Evaluación
+                                    - generic:
+                                        - generic:
+                                            - generic:
+                                                - heading "Avisos de Calidad" [level=3]:
+                                                    - img
+                                                    - text: Avisos de Calidad
+                                                - button "Ver todo":
+                                                    - text: Ver todo
+                                                    - img
+                                        - generic:
+                                            - generic:
+                                                - button "Actualización de Procedimiento Se ha actualizado el procedimiento de control de calidad 15/1/2026":
+                                                    - generic:
+                                                        - generic:
+                                                            - paragraph: Actualización de Procedimiento
+                                                            - paragraph: Se ha actualizado el procedimiento de control de calidad
+                                                            - paragraph: 15/1/2026
+        - generic:
+            - button "Abrir asistente IA":
+                - generic:
+                    - generic:
+                        - generic:
+                            - img
+                - generic: Don Cándido IA
+    - generic:
+        - alert
+    - dialog "👋 ¡Hola! Soy Don Cándido" [ref=e3]:
+        - button "Close" [active] [ref=e4] [cursor=pointer]: ×
+        - banner [ref=e6]: 👋 ¡Hola! Soy Don Cándido
+        - generic [ref=e10]:
+            - img [ref=e14]
+            - generic [ref=e176]:
+                - paragraph [ref=e177]:
+                    - text: Soy tu
+                    - strong [ref=e178]: asistente de IA
+                    - text: para gestionar la calidad de tu organización.
+                - paragraph [ref=e179]: Te voy a guiar por los primeros pasos fundamentales.
+        - contentinfo [ref=e180]:
+            - generic [ref=e181]: 1 de 7
+            - generic [ref=e182]:
+                - button "← Atrás" [disabled]
+                - button "Siguiente →" [ref=e183] [cursor=pointer]
+    - img
+```

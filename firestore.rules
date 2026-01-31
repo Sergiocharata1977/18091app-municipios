@@ -1,0 +1,226 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // ========== FUNCIONES HELPER ==========
+    
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    // Obtener datos del usuario actual
+    function getUserData() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+    
+    function isAdmin() {
+      return isAuthenticated() && getUserData().rol == 'admin';
+    }
+    
+    function isManager() {
+      return isAuthenticated() && getUserData().rol in ['admin', 'gerente'];
+    }
+    
+    // Verifica que el usuario pertenezca a la organización objetivo
+    function belongsToOrganization(orgId) {
+      return isAuthenticated() && getUserData().organization_id == orgId;
+    }
+    
+    // Verifica que el recurso pertenezca a la organización del usuario
+    function resourceBelongsToUserOrg() {
+      return belongsToOrganization(resource.data.organization_id);
+    }
+    
+    // Verifica que el nuevo recurso se cree para la organización del usuario
+    function incomingResourceBelongsToUserOrg() {
+      return belongsToOrganization(request.resource.data.organization_id);
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+    
+    // ========== ORGANIZATIONS ==========
+    
+    match /organizations/{orgId} {
+      allow read: if isAuthenticated() && belongsToOrganization(orgId);
+      allow write: if isAdmin();
+    }
+    
+    // ========== USERS ==========
+    
+    match /users/{userId} {
+      allow read: if isAuthenticated() && (
+        request.auth.uid == userId || 
+        (belongsToOrganization(resource.data.organization_id))
+      );
+      allow create: if isAdmin();
+      allow update: if isOwner(userId) || isAdmin();
+      allow delete: if isAdmin();
+      
+      match /private/{itemId} {
+        allow read, write: if isOwner(userId);
+      }
+    }
+    
+    // ========== CORE COLLECTIONS ==========
+    
+    match /audits/{auditId} {
+      allow read: if resourceBelongsToUserOrg();
+      allow create: if incomingResourceBelongsToUserOrg();
+      allow update: if resourceBelongsToUserOrg() && incomingResourceBelongsToUserOrg() && isManager();
+      allow delete: if resourceBelongsToUserOrg() && isAdmin();
+    }
+    
+    match /findings/{findingId} {
+      allow read: if resourceBelongsToUserOrg();
+      allow create: if incomingResourceBelongsToUserOrg();
+      allow update: if resourceBelongsToUserOrg() && incomingResourceBelongsToUserOrg();
+      allow delete: if resourceBelongsToUserOrg() && isManager();
+    }
+    
+    match /actions/{actionId} {
+      allow read: if resourceBelongsToUserOrg();
+      allow create: if incomingResourceBelongsToUserOrg();
+      allow update: if resourceBelongsToUserOrg() && incomingResourceBelongsToUserOrg();
+      allow delete: if resourceBelongsToUserOrg() && isManager();
+    }
+    
+    match /documents/{docId} {
+      allow read: if resourceBelongsToUserOrg();
+      allow create: if incomingResourceBelongsToUserOrg();
+      allow update: if resourceBelongsToUserOrg() && isManager();
+      // Delete solo si no tiene referencias bloqueadas (validado en backend)
+      allow delete: if resourceBelongsToUserOrg() && isManager();
+    }
+    
+    // ========== DOCUMENT REFERENCES (Document Integration Service) ==========
+    
+    match /document_references/{refId} {
+      // Lectura: cualquier miembro de la organización
+      allow read: if resourceBelongsToUserOrg();
+      
+      // Creación: cualquier usuario autenticado de la org
+      allow create: if incomingResourceBelongsToUserOrg() && 
+                       request.resource.data.created_by == request.auth.uid;
+      
+      // Actualización: solo para actualizar metadata, no campos críticos
+      allow update: if resourceBelongsToUserOrg() && 
+                       incomingResourceBelongsToUserOrg() &&
+                       // No permitir cambiar documento vinculado
+                       request.resource.data.document_id == resource.data.document_id &&
+                       // No permitir cambiar módulo/registro vinculado
+                       request.resource.data.source_module == resource.data.source_module &&
+                       request.resource.data.linked_record_id == resource.data.linked_record_id;
+      
+      // Eliminación: solo si no está bloqueada (ISO 9001)
+      allow delete: if resourceBelongsToUserOrg() && 
+                       (isManager() || resource.data.created_by == request.auth.uid) &&
+                       resource.data.is_locked == false;
+    }
+
+    
+    // ========== RRHH ==========
+    
+    match /personnel/{personnelId} {
+      allow read: if resourceBelongsToUserOrg();
+      allow create: if incomingResourceBelongsToUserOrg(); 
+      allow update: if resourceBelongsToUserOrg() && incomingResourceBelongsToUserOrg(); // Permitir actualizaciones generales por ahora
+      allow delete: if resourceBelongsToUserOrg() && isManager();
+    }
+
+    match /positions/{positionId} {
+      allow read: if resourceBelongsToUserOrg();
+      allow create: if incomingResourceBelongsToUserOrg() && isManager();
+      allow update: if resourceBelongsToUserOrg() && incomingResourceBelongsToUserOrg() && isManager();
+      allow delete: if resourceBelongsToUserOrg() && isManager();
+    }
+    
+    match /competencias/{competenciaId} {
+      allow read: if resourceBelongsToUserOrg();
+      allow create: if incomingResourceBelongsToUserOrg() && isManager();
+      allow update: if resourceBelongsToUserOrg() && incomingResourceBelongsToUserOrg() && isManager();
+      allow delete: if resourceBelongsToUserOrg() && isManager();
+    }
+    
+    match /trainings/{trainingId} {
+      allow read: if resourceBelongsToUserOrg();
+      allow create: if incomingResourceBelongsToUserOrg();
+      allow update: if resourceBelongsToUserOrg() && incomingResourceBelongsToUserOrg();
+      allow delete: if resourceBelongsToUserOrg() && isManager();
+    }
+    
+    match /evaluations/{evaluationId} {
+      allow read: if resourceBelongsToUserOrg();
+      allow create: if incomingResourceBelongsToUserOrg();
+      allow update: if resourceBelongsToUserOrg() && incomingResourceBelongsToUserOrg();
+      allow delete: if resourceBelongsToUserOrg() && isManager();
+    }
+    
+    // ========== CALENDAR & OTHERS ==========
+    
+    match /calendar_events/{eventId} {
+      allow read: if resourceBelongsToUserOrg();
+      allow create: if incomingResourceBelongsToUserOrg();
+      allow update: if resourceBelongsToUserOrg() && incomingResourceBelongsToUserOrg();
+      allow delete: if resourceBelongsToUserOrg() && isManager();
+    }
+
+    match /chat_sessions/{sessionId} {
+      allow read: if isAuthenticated() && resource.data.user_id == request.auth.uid;
+      allow create: if isAuthenticated() && request.resource.data.user_id == request.auth.uid;
+      allow update: if isAuthenticated() && resource.data.user_id == request.auth.uid;
+    }
+    
+    match /uso_claude/{usoId} {
+      allow read: if isAuthenticated() && resource.data.user_id == request.auth.uid;
+      allow create: if isAuthenticated() && request.resource.data.user_id == request.auth.uid;
+    }
+    // ========== SHARED ITEMS (con multi-tenancy) ==========
+    match /shared_items/{shareId} {
+      // CORREGIDO: Ahora valida organization_id
+      allow read: if resourceBelongsToUserOrg();
+      allow create: if incomingResourceBelongsToUserOrg();
+      allow update: if resourceBelongsToUserOrg() && incomingResourceBelongsToUserOrg();
+      allow delete: if resourceBelongsToUserOrg() && isManager();
+    }
+    
+    // ========== COUNTERS (para TraceabilityService) ==========
+    match /counters/{counterId} {
+      // Los contadores segregados por org usan formato: orgId-PREFIX-YEAR
+      // Solo permitir lectura/escritura si el contador pertenece a la org del usuario
+      // o si es un contador global (sin org_id en el documento)
+      allow read: if isAuthenticated() && (
+        resource.data.organization_id == null || 
+        resource.data.organization_id == getUserData().organization_id
+      );
+      allow write: if isAuthenticated() && (
+        request.resource.data.organization_id == null || 
+        request.resource.data.organization_id == getUserData().organization_id
+      );
+    }
+    
+    // ========== AUDIT LOGS (trazabilidad ISO 9001) ==========
+    match /audit_logs/{logId} {
+      // Los logs son inmutables: solo se pueden crear y leer, nunca actualizar/borrar
+      allow read: if resourceBelongsToUserOrg() || isAdmin();
+      allow create: if incomingResourceBelongsToUserOrg();
+      allow update, delete: if false; // Logs inmutables
+    }
+    
+    // ========== LANDING LEADS (solo backend con Admin SDK) ==========
+    match /landing_leads/{leadId} {
+      // Solo acceso desde backend (Admin SDK bypasea reglas)
+      // Admins pueden ver todos los leads
+      allow read: if isAdmin() && getUserData().rol == 'super_admin';
+      allow write: if false; // Solo backend
+    }
+    
+    // ========== DEFAULT FALLBACK ==========
+    // Bloquear acceso por defecto para forzar reglas explícitas
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

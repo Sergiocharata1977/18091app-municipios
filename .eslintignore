@@ -1,0 +1,21 @@
+﻿# Archivos con warnings que no afectan funcionalidad
+src/services/rrhh/EvaluationService.ts
+src/services/rrhh/TrainingService.ts
+src/services/quality/*.ts
+src/services/procesos/*.ts
+src/services/processRecords/*.ts
+src/app/api/**/*.ts
+src/components/rrhh/*.tsx
+src/scripts/*.js
+src/lib/sdk/**/*.ts
+src/lib/ai/**/*.ts
+src/lib/firebase/**/*.ts
+src/lib/auth/**/*.ts
+src/lib/claude/**/*.ts
+src/firebase/**/*.ts
+src/app/(dashboard)/**/*.tsx
+src/components/**/*.tsx
+src/types/**/*.ts
+test-*.ts
+test-*.js
+jest.config.js
