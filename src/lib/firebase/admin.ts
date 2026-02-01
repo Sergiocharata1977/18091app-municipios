@@ -95,6 +95,19 @@ export function initializeFirebaseAdmin(): App {
     // Initialize Firebase Admin with environment variables
     let formattedPrivateKey = privateKey;
 
+    // Handle Base64 encoded private key (robust for environment variables)
+    // If it doesn't look like a clear text PEM key, try to decode it
+    if (!formattedPrivateKey.includes('-----BEGIN PRIVATE KEY-----')) {
+        try {
+            const decoded = Buffer.from(formattedPrivateKey, 'base64').toString('utf8');
+            if (decoded.includes('-----BEGIN PRIVATE KEY-----')) {
+                formattedPrivateKey = decoded;
+            }
+        } catch (e) {
+            // Not base64 or decode failed, continue with original value
+        }
+    }
+
     try {
       // Try to parse as JSON string first (common in some env setups)
       if (
