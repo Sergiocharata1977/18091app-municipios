@@ -25,7 +25,7 @@ export function VideoSection() {
               onClick={() => setIsPlaying(true)}
             >
               <img
-                src="https://img.youtube.com/vi/5nFZcxk6Yys/maxresdefault.jpg"
+                src="https://img.youtube.com/vi/bu2Dt4Q_-fw/maxresdefault.jpg"
                 alt="Don Cándido IA - Video de Presentación"
                 className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
               />
@@ -45,7 +45,7 @@ export function VideoSection() {
           ) : (
             <iframe
               className="absolute inset-0 w-full h-full"
-              src="https://www.youtube.com/embed/5nFZcxk6Yys?autoplay=1&rel=0&modestbranding=1"
+              src="https://www.youtube.com/embed/bu2Dt4Q_-fw?autoplay=1&rel=0&modestbranding=1"
               title="Don Cándido IA - Video de Presentación"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen

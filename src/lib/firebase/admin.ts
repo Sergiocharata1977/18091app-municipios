@@ -77,6 +77,14 @@ export function initializeFirebaseAdmin(): App {
     const storageBucket = process.env.FIREBASE_STORAGE_BUCKET;
 
     if (!projectId || !clientEmail || !privateKey) {
+      // Debug logs for production (masking sensitive values)
+      console.error('[Firebase Admin] Credential Check Failed:');
+      console.error(`- FIREBASE_PROJECT_ID: ${projectId ? 'Set' : 'MISSING'}`);
+      console.error(
+        `- FIREBASE_CLIENT_EMAIL: ${clientEmail ? 'Set' : 'MISSING'}`
+      );
+      console.error(`- FIREBASE_PRIVATE_KEY: ${privateKey ? 'Set' : 'MISSING'}`);
+
       throw new Error(
         'Missing required Firebase Admin SDK credentials. ' +
           'Please ensure FIREBASE_PROJECT_ID, FIREBASE_CLIENT_EMAIL, and FIREBASE_PRIVATE_KEY are set, ' +
