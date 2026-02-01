@@ -88,8 +88,38 @@ export function initializeFirebaseAdmin(): App {
       throw new Error(
         'Missing required Firebase Admin SDK credentials. ' +
           'Please ensure FIREBASE_PROJECT_ID, FIREBASE_CLIENT_EMAIL, and FIREBASE_PRIVATE_KEY are set, ' +
-          'or set FIREBASE_SERVICE_ACCOUNT_PATH to point to your service account JSON file.'
+          'or set FIREBASE_SERVICE_ACCOUNT_PATH to point to your service account JSON file, ' +
+          'or set FIREBASE_SERVICE_ACCOUNT_JSON with a Base64 encoded JSON string.'
       );
+    }
+
+    // Priority 1: Check for full Service Account JSON (Base64 encoded)
+    // This is the most robust method for Vercel
+    const serviceAccountBase64 = process.env.FIREBASE_SERVICE_ACCOUNT_JSON;
+    
+    if (serviceAccountBase64) {
+      try {
+        console.log('[Firebase Admin] Attempting to initialize with FIREBASE_SERVICE_ACCOUNT_JSON...');
+        const decodedJson = Buffer.from(serviceAccountBase64, 'base64').toString('utf8');
+        const serviceAccount = JSON.parse(decodedJson);
+        
+        console.log('[Firebase Admin] ✅ Successfully parsed Service Account JSON');
+        
+        adminApp = initializeApp({
+          credential: cert(serviceAccount),
+          storageBucket: storageBucket || `${serviceAccount.project_id}.appspot.com`,
+        });
+        
+        return adminApp;
+      } catch (error) {
+        console.error('[Firebase Admin] ❌ Failed to parse FIREBASE_SERVICE_ACCOUNT_JSON:', error);
+        // Fallback to legacy method if this fails
+      }
+    }
+
+    // Priority 2: Legacy individual variables (FIREBASE_PRIVATE_KEY, etc.)
+    if (!privateKey) {
+      throw new Error('Missing FIREBASE_PRIVATE_KEY');
     }
 
     // Initialize Firebase Admin with environment variables
