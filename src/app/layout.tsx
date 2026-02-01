@@ -112,6 +112,9 @@ export const metadata: Metadata = {
     },
   },
   // Category
+  other: {
+    'mobile-web-app-capable': 'yes',
+  },
   category: 'technology',
 };
 

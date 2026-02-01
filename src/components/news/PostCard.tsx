@@ -3,28 +3,28 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
+    Card,
+    CardContent,
+    CardFooter,
+    CardHeader,
 } from '@/components/ui/card';
-import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent } from '@/components/ui/dialog';
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Post } from '@/types/news';
 import { formatDistanceToNow } from 'date-fns';
 import { es } from 'date-fns/locale';
 import {
-  MessageSquare,
-  MoreVertical,
-  Pencil,
-  Trash2,
-  ChevronLeft,
-  ChevronRight,
+    ChevronLeft,
+    ChevronRight,
+    MessageSquare,
+    MoreVertical,
+    Pencil,
+    Trash2,
 } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -202,7 +202,11 @@ export function PostCard({
 
             {/* Lightbox Dialog */}
             <Dialog open={lightboxOpen} onOpenChange={setLightboxOpen}>
-              <DialogContent className="max-w-4xl">
+              <DialogContent className="max-w-4xl" aria-describedby="lightbox-description">
+                <DialogTitle className="sr-only">Visualización de imagen</DialogTitle>
+                <DialogDescription id="lightbox-description" className="sr-only">
+                  Imagen ampliada de la publicación
+                </DialogDescription>
                 <div className="relative">
                   <Image
                     src={post.images[currentImageIndex]?.url || ''}
