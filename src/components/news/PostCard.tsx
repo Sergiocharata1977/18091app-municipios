@@ -8,7 +8,12 @@ import {
     CardFooter,
     CardHeader,
 } from '@/components/ui/card';
-import { Dialog, DialogContent } from '@/components/ui/dialog';
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogTitle
+} from '@/components/ui/dialog';
 import {
     DropdownMenu,
     DropdownMenuContent,
