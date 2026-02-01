@@ -42,3 +42,4 @@ next-env.d.ts
 /screenshots
 service-account.json
 test-results/
+FIREBASE_ISSUE_REPORT.md

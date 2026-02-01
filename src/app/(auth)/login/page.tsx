@@ -2,7 +2,16 @@
 
 import { useAuth } from '@/contexts/AuthContext';
 import { signIn } from '@/firebase/auth';
-import { Bot, CheckCircle2, Shield, TrendingUp } from 'lucide-react';
+import {
+    Building2,
+    ChevronRight,
+    Eye,
+    EyeOff,
+    LayoutDashboard,
+    Lock,
+    Mail,
+    ShieldCheck
+} from 'lucide-react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Suspense, useEffect, useState } from 'react';
@@ -10,320 +19,271 @@ import { Suspense, useEffect, useState } from 'react';
 function LoginForm() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  
   const router = useRouter();
   const searchParams = useSearchParams();
   const { user, loading: authLoading } = useAuth();
 
-  // Get the return URL from query params, default to noticias (NUEVO DEFAULT)
-  const returnUrl = searchParams.get('returnUrl') || '/noticias';
+  // Get the return URL from query params, default to dashboard
+  const returnUrl = searchParams.get('returnUrl') || '/dashboard';
 
-  // If user is already logged in, redirect to dashboard or returnUrl
+  // Redirect if already logged in
   useEffect(() => {
     if (!authLoading && user) {
       router.push(returnUrl);
     }
   }, [user, authLoading, router, returnUrl]);
 
+  const mapFirebaseError = (code: string) => {
+    switch (code) {
+      case 'auth/invalid-credential':
+      case 'auth/user-not-found':
+      case 'auth/wrong-password':
+        return 'Credenciales incorrectas. Por favor verifica tu correo y contraseña.';
+      case 'auth/too-many-requests':
+        return 'Demasiados intentos fallidos. Por favor espera unos minutos.';
+      case 'auth/user-disabled':
+        return 'Esta cuenta ha sido deshabilitada.';
+      default:
+        return 'Ocurrió un error al iniciar sesión. Inténtalo de nuevo.';
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError('');
 
-    const result = await signIn(email, password);
+    try {
+      const result = await signIn(email, password);
 
-    if (result.success) {
-      // MULTI-TENANT: Obtener organization_id y verificar STATUS
-      try {
-        const userResponse = await fetch(`/api/users/${result.user?.uid}`);
-        if (userResponse.ok) {
-          const userData = await userResponse.json();
-          const organizationId = userData.organization_id;
-
-          // 1. Verificar Estado
-          if (userData.status === 'pending_approval') {
-            // Forzar logout si no debería entrar, o bloquear acceso.
-            // Como signIn ya ocurrió en Firebase, aquí decidimos si lo dejamos pasar o no.
-            // Para seguridad real, esto también debería chequearse en middleware/reglas.
-            // Pero a nivel UI de login:
-            if (userData.rol !== 'super_admin') {
-              // Super admin siempre pasa
-              // Podríamos hacer signOut aquí si queremos ser estrictos
-              // await signOut();
-              router.push('/pending');
-              return;
-            }
-          }
-
-          if (userData.status === 'expired') {
-            if (userData.rol !== 'super_admin') {
-              router.push('/dashboard/subscription'); // Crear esta página
-              return;
-            }
-          }
-
-          // Verificar expiración por fecha (doble check)
-          if (userData.expirationDate && userData.rol !== 'super_admin') {
-            const expDate = new Date(userData.expirationDate);
-            if (expDate < new Date()) {
-              // Expirado
-              // Actualizar estado en DB si es necesario (idealmente vía cloud function, aquí solo UI)
-              router.push('/dashboard/subscription');
-              return;
-            }
-          }
-
-          if (organizationId) {
-            console.log(
-              '[Login] Usuario pertenece a organización:',
-              organizationId
-            );
-            // Guardar organization_id en sessionStorage para uso en toda la app
-            if (typeof window !== 'undefined') {
-              sessionStorage.setItem('organization_id', organizationId);
-            }
-          } else {
-            console.warn('[Login] Usuario sin organization_id asignado');
-          }
-        }
-      } catch (error) {
-        console.error('[Login] Error al obtener datos de usuario:', error);
+      if (!result.success || !result.user) {
+        throw new Error(result.error || 'Error desconocido');
       }
 
-      // Redirect to the return URL or dashboard
-      router.push(returnUrl);
-    } else {
-      setError(result.error || 'Error al iniciar sesión');
-    }
+      // --- Post-Login Verification Logic ---
+      
+      // Fetch extended user data for role/status checks
+      const userResponse = await fetch(`/api/users/${result.user.uid}`);
+      
+      if (!userResponse.ok) {
+        console.warn('[Login] No se pudo obtener datos extendidos del usuario');
+        // We might choose to let them pass or block them here. 
+        // For now, let's proceed but warn.
+      } else {
+        const userData = await userResponse.json();
+        const { organization_id, status, rol, expirationDate } = userData;
 
-    setLoading(false);
+        // 1. Status Check: Pending
+        if (status === 'pending_approval' && rol !== 'super_admin') {
+          router.push('/pending'); 
+          return;
+        }
+
+        // 2. Status Check: Expired (Manual Status)
+        if (status === 'expired' && rol !== 'super_admin') {
+          router.push('/dashboard/subscription');
+          return;
+        }
+
+        // 3. Status Check: Expired (Date based)
+        if (expirationDate && rol !== 'super_admin') {
+          const expDate = new Date(expirationDate);
+          if (expDate < new Date()) {
+            router.push('/dashboard/subscription'); // TODO: Ensure this route exists
+            return;
+          }
+        }
+
+        // 4. Organization Context
+        if (organization_id) {
+          if (typeof window !== 'undefined') {
+            sessionStorage.setItem('organization_id', organization_id);
+          }
+        } else {
+          console.warn('[Login] Usuario sin organización asignada');
+        }
+      }
+
+      // Success Redirect
+      router.push(returnUrl);
+
+    } catch (err: any) {
+      console.error('[Login Error]', err);
+      // If the error string contains specific firebase codes, map them manually
+      // or rely on the helper if the error object structure allows
+      const errorMessage = typeof err === 'string' ? err : err.message || JSON.stringify(err);
+      
+      // Simple Includes check for common codes if they appear in the message string
+      if (errorMessage.includes('invalid-credential') || errorMessage.includes('wrong-password')) {
+        setError('Credenciales incorrectas.');
+      } else {
+        setError('No se pudo iniciar sesión. Verifica tus datos.');
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
-  // Show loading while checking auth state
-  if (authLoading) {
+  // Loading State
+  if (authLoading || (user && !error)) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-950">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-emerald-500 mx-auto mb-4"></div>
-          <p className="text-slate-400">Verificando sesión...</p>
-        </div>
-      </div>
-    );
-  }
-
-  // Don't show login form if already authenticated
-  if (user) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-950">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-emerald-500 mx-auto mb-4"></div>
-          <p className="text-slate-400">Redirigiendo...</p>
+      <div className="min-h-screen bg-slate-950 flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
+          <p className="text-slate-400 text-sm font-medium animate-pulse">Verificando acceso...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 flex">
-      {/* Left Column - Branding */}
-      <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/10 to-teal-500/10" />
-        <div className="relative z-10 flex flex-col justify-center px-12 xl:px-20">
-          {/* Logo */}
-          <div className="flex items-center gap-3 mb-12">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center shadow-lg shadow-emerald-500/20">
-              <Bot className="w-7 h-7 text-white" />
+    <div className="min-h-screen bg-slate-950 flex">
+      {/* Left Column - Branding & Info */}
+      <div className="hidden lg:flex lg:w-[55%] relative overflow-hidden bg-slate-900">
+        {/* Abstract Background Shapes */}
+        <div className="absolute top-0 left-0 w-full h-full overflow-hidden">
+          <div className="absolute -top-[20%] -left-[10%] w-[70%] h-[70%] bg-blue-600/10 rounded-full blur-3xl" />
+          <div className="absolute bottom-[10%] right-[10%] w-[50%] h-[50%] bg-indigo-600/10 rounded-full blur-3xl" />
+        </div>
+
+        <div className="relative z-10 flex flex-col justify-center px-16 xl:px-24 w-full">
+          <div className="mb-12">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-sm font-medium mb-6">
+              <Building2 className="w-4 h-4" />
+              <span>Plataforma de Gestión Municipal</span>
             </div>
-            <span className="text-2xl font-bold text-white">
-              Don Cándido IA
-            </span>
+            
+            <h1 className="text-5xl font-bold text-white mb-6 leading-tight tracking-tight">
+              Transformando la <br />
+              <span className="text-blue-500">Gestión Pública</span> <br />
+              con Calidad ISO
+            </h1>
+            
+            <p className="text-lg text-slate-400 leading-relaxed max-w-xl">
+              Accede al sistema integral para la administración eficiente de servicios, 
+              control de procesos y cumplimiento de la norma ISO 18091.
+            </p>
           </div>
 
-          {/* Title */}
-          <h1 className="text-4xl xl:text-5xl font-bold text-white mb-6 leading-tight">
-            Gestión de Calidad
-            <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-400">
-              Potenciada por IA
-            </span>
-          </h1>
-
-          <p className="text-lg text-slate-300 mb-12 leading-relaxed">
-            Automatiza auditorías, gestiona hallazgos y optimiza tus procesos
-            ISO 9001 con la ayuda de inteligencia artificial avanzada.
-          </p>
-
-          {/* Features */}
-          <div className="space-y-6">
-            <div className="flex items-start gap-4">
-              <div className="w-10 h-10 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center flex-shrink-0">
-                <Bot className="w-5 h-5 text-emerald-400" />
-              </div>
-              <div>
-                <h3 className="text-white font-semibold mb-1">
-                  Asistente de IA 24/7
-                </h3>
-                <p className="text-slate-400 text-sm">
-                  Gestión de Hallazgos Automatizada
-                </p>
-              </div>
+          {/* Feature Grid */}
+          <div className="grid grid-cols-2 gap-6">
+            <div className="p-4 rounded-xl bg-slate-800/50 border border-slate-700/50 backdrop-blur-sm">
+              <LayoutDashboard className="w-6 h-6 text-blue-400 mb-3" />
+              <h3 className="text-white font-semibold mb-1">Panel de Control</h3>
+              <p className="text-slate-400 text-xs">Visión global de indicadores</p>
             </div>
-
-            <div className="flex items-start gap-4">
-              <div className="w-10 h-10 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center flex-shrink-0">
-                <TrendingUp className="w-5 h-5 text-emerald-400" />
-              </div>
-              <div>
-                <h3 className="text-white font-semibold mb-1">
-                  Dashboard en Tiempo Real
-                </h3>
-                <p className="text-slate-400 text-sm">
-                  Monitorea KPIs y tendencias automáticamente
-                </p>
-              </div>
+            
+            <div className="p-4 rounded-xl bg-slate-800/50 border border-slate-700/50 backdrop-blur-sm">
+              <ShieldCheck className="w-6 h-6 text-indigo-400 mb-3" />
+              <h3 className="text-white font-semibold mb-1">Auditoría Continua</h3>
+              <p className="text-slate-400 text-xs">Seguimiento de conformidad</p>
             </div>
-
-            <div className="flex items-start gap-4">
-              <div className="w-10 h-10 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center flex-shrink-0">
-                <Shield className="w-5 h-5 text-emerald-400" />
-              </div>
-              <div>
-                <h3 className="text-white font-semibold mb-1">
-                  Trazabilidad Total
-                </h3>
-                <p className="text-slate-400 text-sm">
-                  Cumplimiento completo de ISO 9001:2015
-                </p>
-              </div>
-            </div>
+          </div>
+          
+          <div className="mt-12 flex items-center gap-4 text-xs text-slate-500 font-medium">
+            <span>© 2026 Sistema de Gestión Municipal</span>
+            <span className="w-1 h-1 rounded-full bg-slate-700" />
+            <span>Versión 2.0</span>
           </div>
         </div>
       </div>
 
       {/* Right Column - Login Form */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-8">
-        <div className="w-full max-w-md">
-          {/* Mobile Logo */}
-          <div className="lg:hidden flex items-center justify-center gap-3 mb-8">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center shadow-lg shadow-emerald-500/20">
-              <Bot className="w-7 h-7 text-white" />
+      <div className="w-full lg:w-[45%] flex flex-col justify-center items-center p-8 lg:p-12 relative">
+        <div className="w-full max-w-sm">
+          {/* Mobile Header */}
+          <div className="lg:hidden mb-8 text-center">
+            <div className="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-blue-600/20">
+              <Building2 className="w-6 h-6 text-white" />
             </div>
-            <span className="text-2xl font-bold text-white">
-              Don Cándido IA
-            </span>
+            <h2 className="text-2xl font-bold text-white">Gestión Municipal</h2>
           </div>
 
-          {/* Form Card */}
-          <div className="bg-slate-900/50 backdrop-blur-xl border border-slate-800 rounded-2xl p-8 shadow-2xl">
-            <div className="mb-8">
-              <h2 className="text-2xl font-bold text-white mb-2">
-                Bienvenido de nuevo
-              </h2>
-              <p className="text-slate-400">
-                Ingresa tus credenciales para acceder al sistema
-              </p>
-            </div>
+          <div className="mb-8">
+            <h2 className="text-3xl font-bold text-white mb-2 tracking-tight">Bienvenido</h2>
+            <p className="text-slate-400">Ingresa tus credenciales para continuar.</p>
+          </div>
 
-            <form onSubmit={handleSubmit} className="space-y-6">
-              {/* Email Input */}
-              <div>
-                <label
-                  htmlFor="email"
-                  className="block text-sm font-medium text-slate-300 mb-2"
-                >
-                  Correo Electrónico
-                </label>
-                <input
-                  id="email"
-                  name="email"
-                  type="email"
+          <form onSubmit={handleSubmit} className="space-y-5">
+            <div className="space-y-1.5">
+              <label className="text-sm font-medium text-slate-300 ml-1">Correo Electrónico</label>
+              <div className="relative">
+                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500" />
+                <input 
+                  type="email" 
                   required
-                  className="w-full px-4 py-3 bg-slate-800/50 border border-slate-700 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all"
-                  placeholder="usuario@empresa.com"
                   value={email}
-                  onChange={e => setEmail(e.target.value)}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="funcionario@municipio.gob.ar"
+                  className="w-full bg-slate-900 border border-slate-700 text-white rounded-xl py-3 pl-10 pr-4 focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 outline-none transition-all placeholder:text-slate-600"
                 />
               </div>
-
-              {/* Password Input */}
-              <div>
-                <label
-                  htmlFor="password"
-                  className="block text-sm font-medium text-slate-300 mb-2"
-                >
-                  Contraseña
-                </label>
-                <input
-                  id="password"
-                  name="password"
-                  type="password"
-                  required
-                  className="w-full px-4 py-3 bg-slate-800/50 border border-slate-700 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all"
-                  placeholder="••••••••"
-                  value={password}
-                  onChange={e => setPassword(e.target.value)}
-                />
-              </div>
-
-              {/* Error Message */}
-              {error && (
-                <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-4">
-                  <p className="text-red-400 text-sm">{error}</p>
-                </div>
-              )}
-
-              {/* Submit Button */}
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-semibold py-3 px-4 rounded-lg transition-all duration-200 shadow-lg shadow-emerald-500/20 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-              >
-                {loading ? (
-                  <>
-                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                    <span>Ingresando...</span>
-                  </>
-                ) : (
-                  <>
-                    <span>Ingresar</span>
-                    <CheckCircle2 className="w-5 h-5" />
-                  </>
-                )}
-              </button>
-            </form>
-
-            {/* Register Link */}
-            <div className="mt-6 text-center">
-              <p className="text-slate-400 text-sm">
-                ¿No tienes cuenta?{' '}
-                <Link
-                  href="/register"
-                  className="text-emerald-400 hover:text-emerald-300 font-medium transition-colors"
-                >
-                  Regístrate gratis
-                </Link>
-              </p>
             </div>
-          </div>
 
-          {/* Footer */}
-          <p className="text-center text-slate-500 text-sm mt-8">
-            © {new Date().getFullYear()} Don Cándido IA. Todos los derechos
-            reservados.
+            <div className="space-y-1.5">
+              <div className="flex justify-between items-center ml-1">
+                <label className="text-sm font-medium text-slate-300">Contraseña</label>
+                <Link href="/forgot-password" className="text-xs text-blue-400 hover:text-blue-300 transition-colors">
+                  ¿Olvidaste tu contraseña?
+                </Link>
+              </div>
+              <div className="relative">
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500" />
+                <input 
+                  type={showPassword ? 'text' : 'password'} 
+                  required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="••••••••"
+                  className="w-full bg-slate-900 border border-slate-700 text-white rounded-xl py-3 pl-10 pr-12 focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 outline-none transition-all placeholder:text-slate-600"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 transition-colors p-1"
+                >
+                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
+              </div>
+            </div>
+
+            {error && (
+              <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-sm flex items-start gap-2 animate-in fade-in slide-in-from-top-2">
+                <ShieldCheck className="w-4 h-4 mt-0.5 shrink-0" />
+                <p>{error}</p>
+              </div>
+            )}
+
+            <button 
+              type="submit" 
+              disabled={loading}
+              className="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold py-3 rounded-xl transition-all shadow-lg shadow-blue-600/25 active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2 group"
+            >
+              {loading ? (
+                <>
+                  <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  <span>Validando...</span>
+                </>
+              ) : (
+                <>
+                  <span>Iniciar Sesión</span>
+                  <ChevronRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+                </>
+              )}
+            </button>
+          </form>
+
+          <p className="mt-8 text-center text-sm text-slate-500">
+            ¿No tienes acceso?{' '}
+            <Link href="/register" className="text-blue-400 hover:text-blue-300 font-medium transition-colors">
+              Solicitar cuenta
+            </Link>
           </p>
         </div>
-      </div>
-    </div>
-  );
-}
-
-function LoginLoading() {
-  return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-950">
-      <div className="text-center">
-        <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-emerald-500 mx-auto mb-4"></div>
-        <p className="text-slate-400">Cargando...</p>
       </div>
     </div>
   );
@@ -331,7 +291,11 @@ function LoginLoading() {
 
 export default function LoginPage() {
   return (
-    <Suspense fallback={<LoginLoading />}>
+    <Suspense fallback={
+      <div className="min-h-screen bg-slate-950 flex items-center justify-center">
+        <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
+      </div>
+    }>
       <LoginForm />
     </Suspense>
   );
