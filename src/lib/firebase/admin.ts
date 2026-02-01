@@ -95,16 +95,26 @@ export function initializeFirebaseAdmin(): App {
     // Initialize Firebase Admin with environment variables
     let formattedPrivateKey = privateKey;
 
+    console.log('[Firebase Admin] Diagnosis:');
+    console.log(`- Raw Key Length: ${privateKey.length}`);
+    console.log(`- Starts with Quote: ${privateKey.trim().startsWith('"') || privateKey.trim().startsWith("'")}`);
+    console.log(`- Includes Header: ${privateKey.includes('-----BEGIN PRIVATE KEY-----')}`);
+    
     // Handle Base64 encoded private key (robust for environment variables)
     // If it doesn't look like a clear text PEM key, try to decode it
     if (!formattedPrivateKey.includes('-----BEGIN PRIVATE KEY-----')) {
+        console.log('- Detecting Base64 format...');
         try {
             const decoded = Buffer.from(formattedPrivateKey, 'base64').toString('utf8');
             if (decoded.includes('-----BEGIN PRIVATE KEY-----')) {
+                console.log('- ✅ Successfully decoded Base64 key');
                 formattedPrivateKey = decoded;
+            } else {
+                console.warn('- ⚠️ Decoded Base64 but keys header missing');
+                console.log(`- Decoded start: ${decoded.substring(0, 50)}...`);
             }
         } catch (e) {
-            // Not base64 or decode failed, continue with original value
+            console.error('- ❌ Failed to decode Base64:', e);
         }
     }
 
