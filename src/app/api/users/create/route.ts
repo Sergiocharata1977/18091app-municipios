@@ -3,6 +3,33 @@
 import { getAdminAuth, getAdminFirestore } from '@/lib/firebase/admin';
 import { NextRequest, NextResponse } from 'next/server';
 
+/**
+ * Get or create the default organization for new users
+ * This ensures we always have a valid organization_id
+ */
+async function getOrCreateDefaultOrganization(db: FirebaseFirestore.Firestore): Promise<string> {
+  // Try to get the first organization
+  const orgsSnapshot = await db.collection('organizations').limit(1).get();
+  
+  if (!orgsSnapshot.empty) {
+    return orgsSnapshot.docs[0].id;
+  }
+  
+  // If no organization exists, create a default one
+  console.log('[getOrCreateDefaultOrganization] No organization found, creating default...');
+  const defaultOrg = await db.collection('organizations').add({
+    name: 'Municipio de Prueba',
+    type: 'municipio',
+    plan: 'premium',
+    status: 'active',
+    created_at: new Date(),
+    updated_at: new Date(),
+  });
+  
+  console.log('[getOrCreateDefaultOrganization] Created default organization:', defaultOrg.id);
+  return defaultOrg.id;
+}
+
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
@@ -30,13 +57,16 @@ export async function POST(request: NextRequest) {
         );
       }
 
+      // Get or create default organization
+      const organizationId = await getOrCreateDefaultOrganization(db);
+      
       // Create user record in Firestore using Admin SDK
       await db.collection('users').doc(body.uid).set({
         email: body.email,
         personnel_id: '', // Will be assigned later by admin
         rol: 'operario', // Default role
         activo: true,
-        organization_id: 'CDq6tmlZYWGG8Tc0oO4I', // Los Señores del Agro S.A.
+        organization_id: organizationId,
         modulos_habilitados: null, // null = acceso completo por defecto
         created_at: new Date(),
         updated_at: new Date(),
@@ -205,6 +235,9 @@ export async function POST(request: NextRequest) {
       });
     }
 
+    // Get or create default organization
+    const organizationId = await getOrCreateDefaultOrganization(db);
+
     // Create user record in Firestore
     await db
       .collection('users')
@@ -214,7 +247,7 @@ export async function POST(request: NextRequest) {
         personnel_id: personnelId,
         rol: role || 'operario',
         activo: true,
-        organization_id: 'CDq6tmlZYWGG8Tc0oO4I', // Los Señores del Agro S.A.
+        organization_id: organizationId,
         modulos_habilitados: null, // null = acceso completo por defecto
         created_at: new Date(),
         updated_at: new Date(),
